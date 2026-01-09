@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  ha-bridge:
+    build:
+      context: .
+      args:
+        VERSION: "${VERSION:-dev}"
+        BUILD_TIME: "${BUILD_TIME:-unknown}"
+    image: open-xiaoai/ha-bridge:latest
+    container_name: xiaoai-ha-bridge
+    restart: unless-stopped
+    ports:
+      - "4399:4399"
+    volumes:
+      - ./config.yaml:/app/config.yaml:ro
+    environment:
+      - TZ=Asia/Shanghai
+    networks:
+      - ha-network
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:4399/health"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+
+networks:
+  ha-network:
+    external: true
+    name: ha-network
+
+# 如果 ha-network 不存在，可以使用以下配置自动创建：
+# networks:
+#   ha-network:
+#     driver: bridge

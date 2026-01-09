@@ -1,0 +1,57 @@
+# Open-XiaoAI HA Bridge 配置文件
+
+# WebSocket 服务器配置
+server:
+  host: "0.0.0.0"
+  port: 4399
+
+# Home Assistant 配置
+homeassistant:
+  # Home Assistant URL
+  url: "http://192.168.1.100:8123"
+  # Long-Lived Access Token（在 HA 个人资料页面生成）
+  token: "YOUR_LONG_LIVED_ACCESS_TOKEN"
+  # 指定 Pipeline ID（可选，留空使用默认）
+  # pipeline_id: ""
+
+# 音频配置
+audio:
+  input_sample_rate: 16000   # 输入采样率（麦克风）
+  output_sample_rate: 24000  # 输出采样率（扬声器）
+  channels: 1                # 声道数
+  bits_per_sample: 16        # 位深
+  vad_enabled: true          # 启用 VAD
+  vad_model_path: "models/silero_vad.onnx"  # Silero VAD 模型路径
+  vad_threshold: 0.5         # 高阈值 - 确认有声音
+  vad_threshold_low: 0.2     # 低阈值 - 确认无声音
+  silence_timeout: 1200      # 静音超时（毫秒）
+
+# 会话配置
+session:
+  multi_turn_enabled: true           # 多轮对话开关
+  wait_speech_timeout: 8s            # 等待用户说话超时
+  post_response_wait: 4s             # 响应后等待继续
+  max_session_duration: 3m           # 最大会话时长
+  
+  # 提示语配置
+  prompts:
+    wakeup: "在呢"
+    timeout: "下次需要帮忙再叫我哦~"
+    goodbye: "好的，再见~"
+    continue: ""  # 可选，继续监听提示
+  
+  # 结束关键词
+  end_keywords:
+    - "没有了"
+    - "没了"
+    - "谢谢"
+    - "再见"
+    - "退出"
+    - "结束"
+    - "好了"
+    - "不用了"
+
+# 日志配置
+log:
+  level: "info"    # debug, info, warn, error
+  format: "json"   # json, text
